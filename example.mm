@@ -1,22 +1,63 @@
+// imports/modules/libraries/etc
 
-hello <| 'Hello'
-'World!' |> world
+// load all public apis from a namespace
 
-checkShouldPrint? <| (bool) if:true:true?false |> shouldPrint
+    // longhand
+    imports <| load('some/namespace') 
+    import(imports)
 
-do checkShouldPrint?
+    // longhand as one-liner
+    import(<| load('some/namespace'))
+
+    // shorthand
+    ::some/namespace
+
+// load specific public apis from a namespace
+
+    // longhand
+    imports <|  | filter_keys [func property etc] 
+                | load 'some/namespace'
+    import(imports) 
+
+    // longhand as one-liner
+    import(<| import | filter_keys([func property etc]) | load('some/namespace'))
+
+    // shorthand
+    ::{a:func_a b:func_b}::some/namespace
 
 
-if  :(do checkShouldPrint?)
-    :(do printHelloWorld) 
+// class object structure
 
-printHelloWorld <| (nil) [arg1 arg2] prnt:[arg1 arg2]
+// name args setter
+#(my_class #[arg1 arg2] <| 
+{
+    {
+        field_a, 
+        field_b
+    }: 
+    [
+        #(my_class #[arg1 arg2] | field_a <| arg1 && field_b <| arg2 | return my_class)
+        #(my_class #[arg1] | my_class arg1 4 | return my_class)
+    ]
+
+    public_method_args: <| #(int #[arg1 arg2] | do private_method arg1 arg2) 
+
+    public_method_fields <| #(int | return field_a + field_b)
+
+    @private_method: <| #(int #[arg1 #arg2] | return arg1 + arg2)
+})
+
+objcet_a <| new my_class
+result_a <| do object_a.public_method_args 3 5
+
+result_b <| (new my_class).public_method_args 22 27
+
+// result_a is 8
+// result_b is 49
 
 
-if shouldPrint? do printHelloWorld ('Hello' 'World')
 
 
-func <| (int) [arg1 arg2] method:[args] |> message
 
 
 
@@ -52,9 +93,6 @@ decimal <|  dec`1.25    // full
         ||  1`1/4       // implicit
         ||  1/4         // implicit (evaluation)
 
-
-
-
 // Functoins / Pipelines
 
 // call a simple functionm store the result
@@ -83,9 +121,7 @@ i`result <| | do round_floor
             | do sort_oldest
             | <| [1.3 1/5 12 1`1/5]
 
-
 // try/catch
-
 
 a_result <| | do round_floor
             | try   | do get_first
@@ -93,8 +129,6 @@ a_result <| | do round_floor
                     | catch ['null_ref_exception']      |> throw 'Null Reference Exception'
                     | catch ['out_of_range_exception']  |> throw 'Argument Out Of Range Exception'
             | <| [1.3 1/5 12 1`1/5]
-
-
 
 // if/else
 
@@ -117,7 +151,6 @@ a_result <| | if condition
         | if another_condition
             | condition = false
 
-
 // for
 
 <>  | for x in Collection
@@ -129,8 +162,6 @@ a_result <| | if condition
 
 <>  | for i<|0 i>=100 i++
         | do this_with_index i
-
-
 
 // functions 
 my_func <| (int) [arg1 arg2] do something
@@ -145,7 +176,6 @@ my_func <| (int) [arg1 arg2] do something
 {a:{aa:1 ab:2} b:4 c:[1 3 4 5]}
 
 // everything is immutable, postfix with <|| to allow overwriting
-
 
 my_set <| [1 2 3 4 5]
 

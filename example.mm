@@ -55,7 +55,7 @@ do #( map
             | ns )
 
 // object name will be the class name:
-class_name <| {
+dog <| {
     // fields are a special map
     fields: {name: nil breed: nil}
 

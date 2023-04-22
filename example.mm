@@ -54,6 +54,41 @@ do #( map
                 | map_map ( map ) 
             | ns )
 
+
+// object name will be the class name:
+class <| {
+    // fields are a special map
+    f: {a: nil b: nil}
+
+    // constructors are a list, allowing for polymorphism. function name can be anything.
+    c: [ #(#[a, b] | f[a] <| a && f[b] <| b) ]
+
+    // keys can contain any data structure, including functions or other classes. 
+    fn: #(void #[c] do_something(c))
+
+    a: 'a'
+
+    b: 1
+}
+
+instance <| class::c(1 2)
+// {
+//     instance = {
+//         f: {
+//             a: 1
+//             b: 2
+//         }
+//         c: [
+//             //fn...
+//         ]
+//         fn: //fn...
+//         a: 'a'
+//         b: 1
+//     }
+// }
+
+instance::fn('123')
+
 // object name will be the class name:
 dog <| {
     // fields are a special map
@@ -64,11 +99,15 @@ dog <| {
 
     // keys can contain any data structure, including functions or other classes. 
     train: #(bool #[command] <| | random | [true false])
+
+    // expose fields as properties
+    name: fields[name]
 }
 
 // calling an array of functions will attempt to match the signiture.
 pet <| dog::rescue('Mima' 'Mongrel')
 isTrained <| pet::train('sit')
+pet_name <| pet.name
 
 // example of how a class could work as a custom object object
 

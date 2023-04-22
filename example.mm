@@ -1,29 +1,58 @@
-// imports/modules/libraries/etc
+// Examples on how we handle namespace imports / modules / libraries (name to be confirmed).
+// This example includes the verbose, one-liners, and shorthand variations.
+// load() is a built in function that loads files from disk.
+// import() is a built in function that imports public map keys into the runtime.
+// :: is an import specific token.
 
-// load all public apis from a namespace
-
-    // longhand
+// Import everything from a file:
+    
+    // verbose 
     imports <| load('some/namespace') 
     import(imports)
 
-    // longhand as one-liner
+    // one-liner
     import(<| load('some/namespace'))
 
     // shorthand
     ::some/namespace
 
-// load specific public apis from a namespace
+    // Functions can now be accessed directly
+    func_a(property)
+    func_b('example')
 
-    // longhand
-    imports <|  | filter_keys [func property etc] 
+// Import only specific map keys from a file:
+
+    // verbose
+    imports <|  | filter_keys [func_a func_b property] 
                 | load 'some/namespace'
     import(imports) 
 
-    // longhand as one-liner
-    import(<| import | filter_keys([func property etc]) | load('some/namespace'))
+    // one-liner
+    import(<| import | filter_keys([func_a func_b property]) | load('some/namespace'))
+
+    // shorthand 
+    ::some/namespace | [func property etc]
+
+// load specific keys from namespace but also change key name (alias)
+
+    // TODO: verbose & one-liner
 
     // shorthand
-    ::{a:func_a b:func_b}::some/namespace
+    ::some/namespace | {a:func b:property c:etc}
+
+
+// shorthand translation
+::some/namespace
+// translates to
+do #{ map
+        #[ ns ] 
+        #[ ns map ] 
+        #[ ns arr ] <|   
+            | if arr != nil 
+                | filter_keys ( arr ) 
+            | if map != nil
+                | map_map ( map ) 
+            | ns }
 
 
 // class object structure

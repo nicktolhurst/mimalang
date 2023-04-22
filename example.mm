@@ -44,7 +44,7 @@
 // shorthand translation
 ::some/namespace
 // translates to
-do #{ map
+do #( map
         #[ ns ] 
         #[ ns map ] 
         #[ ns arr ] <|   
@@ -52,13 +52,28 @@ do #{ map
                 | filter_keys ( arr ) 
             | if map != nil
                 | map_map ( map ) 
-            | ns }
+            | ns )
 
+// object name will be the class name:
+class_name <| {
+    // fields are a special map
+    fields: {name: nil breed: nil}
 
-// class object structure
+    // constructors are a list, allowing for polymorphism. function name can be anything.
+    rescue: [ #(#[name, breed] | fields[name] <| name && fields[breed] <| breed) ]
+
+    // keys can contain any data structure, including functions or other classes. 
+    train: #(bool #[command] <| | random | [true false])
+}
+
+// calling an array of functions will attempt to match the signiture.
+pet <| dog::rescue('Mima' 'Mongrel')
+isTrained <| pet::train('sit')
+
+// example of how a class could work as a custom object object
 
 // name args setter
-#(my_class #[arg1 arg2] <| 
+@(my_class #[arg1 arg2] <| 
 {
     {
         field_a, 

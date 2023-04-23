@@ -15,6 +15,21 @@ public sealed class SyntaxTree
         return parser.Parse();
     }
 
+    public static IEnumerable<Token> ParseTokens(string text)
+    {
+        var lexer = new Lexer(text);
+
+        while(true)
+        {
+            var token = lexer.Lex();
+
+            if (token.Kind == Kind.EOF)
+                break;
+            
+            yield return token;
+        }
+    }
+
     public IReadOnlyList<Diagnostic> Diagnostics { get; }
     public ExpressionSyntax Root { get; }
     public Token EndOfFileToken { get; }

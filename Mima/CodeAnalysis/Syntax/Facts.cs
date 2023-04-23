@@ -1,6 +1,6 @@
 namespace Mima.CodeAnalysis.Syntax;
 
-internal static class Facts 
+public static class Facts 
 {
     public static int GetUnaryOperatorPrecedence(this Kind kind)
     {
@@ -41,6 +41,30 @@ internal static class Facts
             "true" => Kind.True,
             "false" => Kind.False,
             _ => Kind.Identifier,
+        };
+    }
+
+    public static string? GetText(Kind kind)
+    {
+        return kind switch
+        {
+            Kind.AmpAmp         => "&&",
+            Kind.PipePipe       => "||",
+            Kind.Equals         => "=",
+            Kind.Bang           => "!",
+            Kind.EqualsEquals   => "==",
+            Kind.BangEquals     => "!=",
+            // case Kind.Identifier: return "";
+            // case Kind.Number: return "";
+            Kind.Asterisk       => "*",
+            Kind.ForwardSlash   => "/",
+            Kind.Plus           => "+",
+            Kind.Minus          => "-",
+            Kind.CloseParen     => ")",
+            Kind.OpenParen      => "(",
+            Kind.False          => "false",
+            Kind.True           => "true",
+            _ => null,
         };
     }
 }

@@ -82,32 +82,49 @@ internal sealed class Lexer
         return Current switch
         {
             // Arithmetic operators:
-            '+' => LexToken(Kind.Plus, _position, "+", null),
-            '-' => LexToken(Kind.Minus, _position, "-", null),
-            '/' => LexToken(Kind.ForwardSlash, _position, "/", null),
-            '*' => LexToken(Kind.Asterisk, _position, "*", null),
+            '+' => LexToken(Kind.Plus),
+            '-' => LexToken(Kind.Minus),
+            '/' => LexToken(Kind.ForwardSlash),
+            '*' => LexToken(Kind.Asterisk),
 
             // Equivalence operators:
-            '=' when LookAhead == '=' => LexToken(Kind.EqualsEquals, _position, "==", null),
-            '!' when LookAhead == '=' => LexToken(Kind.BangEquals, _position, "!=", null),
+            '=' when LookAhead == '=' => LexToken(Kind.EqualsEquals),
+            '!' when LookAhead == '=' => LexToken(Kind.BangEquals),
 
             // Scope operators:
-            '(' => LexToken(Kind.OpenParen, _position, "(", null),
-            ')' => LexToken(Kind.CloseParen, _position, ")", null),
+            '(' => LexToken(Kind.OpenParen),
+            ')' => LexToken(Kind.CloseParen),
 
             // Logic operators:
-            '&' when LookAhead == '&' => LexToken(Kind.AmpAmp, _position, "&&", null),
-            '|' when LookAhead == '|' => LexToken(Kind.PipePipe, _position, "||", null),
+            '&' when LookAhead == '&' => LexToken(Kind.AmpAmp),
+            '|' when LookAhead == '|' => LexToken(Kind.PipePipe),
 
             // Negation operators:
-            '!' => LexToken(Kind.Bang, _position, "!", null),
+            '!' => LexToken(Kind.Bang),
 
             // Assignment operators:
-            '=' => LexToken(Kind.Equals, _position, "=", null),
-            '<' when LookAhead == '|' => LexToken(Kind.Equals, _position, "<|", null),
+            '=' => LexToken(Kind.Equals),
+            '<' when LookAhead == '|' => LexToken(Kind.Equals, "<|"),
 
-            _ => BadToken(Kind.BadToken, _position, _text.Substring(_position - 1, 1), null),
+            _ => BadToken(Kind.BadToken, _text.Substring(_position - 1, 1)),
         };
+    }
+
+    private Token LexToken(Kind kind)
+    {
+        var position = _position;
+        var text = Facts.GetText(kind);
+
+        _position += text.Length;
+        return new Token(kind, position, text, null);
+    }
+
+    private Token LexToken(Kind kind, string text)
+    {
+        var position = _position;
+
+        _position += text.Length;
+        return new Token(kind, position, text, null);
     }
 
     private Token LexToken(Kind kind, int position, string text, object? value)
@@ -116,10 +133,10 @@ internal sealed class Lexer
         return new Token(kind, position, text, value);
     }
 
-    private Token BadToken(Kind kind, int position, string text, object? value)
+    private Token BadToken(Kind kind, string text)
     {
-        _diagnostics.ReportBadCharacter(position, Current);
+        _diagnostics.ReportBadCharacter(_position, Current);
 
-        return LexToken(kind, position, text, value);
+        return LexToken(kind, _position, text, null);
     }
 }

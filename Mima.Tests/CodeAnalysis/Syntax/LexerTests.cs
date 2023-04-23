@@ -1,6 +1,6 @@
-using Mima.CodeAnalysis.Syntax;
+namespace Mima.Tests.CodeAnalysis.Syntax;
 
-namespace Mima.CodeAnalysis.Syntax;
+using Mima.CodeAnalysis.Syntax;
 
 public class LexerTests
 {

@@ -1,7 +1,9 @@
 namespace Mima.CodeAnalysis.Binding;
 
-internal enum Kind
+internal enum BoundNodeKind
 {
     UnaryExpression,
-    LiteralExpression
+    LiteralExpression,
+    VariableExpression,
+    AssignmentExpression
 }

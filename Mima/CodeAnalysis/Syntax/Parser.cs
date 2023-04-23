@@ -41,7 +41,26 @@ internal sealed class Parser
         return new SyntaxTree(_diagnostics, expression, eof);
     }
 
-    private ExpressionSyntax ParseExpression(int parentPrecedence = 0)
+    private ExpressionSyntax ParseExpression()
+    {
+        return ParseAssignmentExpression();
+    }
+
+    private ExpressionSyntax ParseAssignmentExpression()
+    {
+        if(Peek(0).Kind == Kind.Identifier &&
+           Peek(1).Kind == Kind.Equals)
+        {
+            var leftToken = NextToken();
+            var operatorToken = NextToken();
+            var rightExpression = ParseAssignmentExpression();
+            return new AssignmentExpressionSyntax(leftToken, operatorToken, rightExpression);
+        }
+
+        return ParseBinaryExpression();
+    }
+
+    private ExpressionSyntax ParseBinaryExpression(int parentPrecedence = 0)
     {
         ExpressionSyntax left;
 
@@ -50,7 +69,7 @@ internal sealed class Parser
         if(unaryOperatorPrecedence != 0 && unaryOperatorPrecedence >= parentPrecedence)
         {
             var operatorToken = NextToken();
-            var operand = ParseExpression(unaryOperatorPrecedence);
+            var operand = ParseBinaryExpression(unaryOperatorPrecedence);
             left = new UnaryExpressionSyntax(operatorToken, operand);
         }
         else
@@ -65,7 +84,7 @@ internal sealed class Parser
                 break;
 
             var operatorToken = NextToken();
-            var right = ParseExpression(precedence);
+            var right = ParseBinaryExpression(precedence);
             left = new BinaryExpressionSyntax(left, operatorToken, right);
         }
 
@@ -91,6 +110,13 @@ internal sealed class Parser
                 var value = keywordToken.Kind == Kind.True;
                 return new LiteralExpressionSyntax(keywordToken, value);
             }
+
+            case Kind.Identifier:
+            {
+                var identifierToken = NextToken();
+                return new NameExpressionSyntax(identifierToken);
+            }
+
             default:
             {
                 var token = MatchToken(Kind.Number);

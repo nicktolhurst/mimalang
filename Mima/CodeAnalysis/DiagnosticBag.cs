@@ -27,6 +27,9 @@ internal sealed class DiagnosticBag : IEnumerable<Diagnostic>
     internal void ReportInvalidNumber(TextSpan span, string text, Type type) 
         => Report(span, $"The number {text} is not a valid {type}.");
 
+    internal void ReportUndefinedName(TextSpan span, string name)
+        => Report(span, $"variable '{name}' does not exist.");
+
     internal void ReportUndefinedUnaryOperator(TextSpan span, string text, Type type)
         => Report(span, $"Unary operator '{text}' is not defined for type '{type}'.");
 

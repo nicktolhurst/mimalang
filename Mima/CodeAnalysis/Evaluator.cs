@@ -4,11 +4,13 @@ using Binding;
 
 internal class Evaluator
 {
-    private readonly Expression _root;
+    private readonly BoundExpression _root;
+    private readonly Dictionary<VariableSymbol, object> _variables;
 
-    public Evaluator(Expression root)
+    public Evaluator(BoundExpression root, Dictionary<VariableSymbol, object> variables)
     {
         _root = root;
+        _variables = variables;
     }
 
     public object Evaluate()
@@ -16,15 +18,22 @@ internal class Evaluator
         return EvaluateExpression(_root);
     }
 
-    private object EvaluateExpression(Expression node)
+    private object EvaluateExpression(BoundExpression node)
     {
+        if (node is BoundLiteralExpression n)
+            return n.Value;
 
-        if (node is LiteralExpression literalExpression)
+        if (node is BoundVariableExpression v)
+            return _variables[v.Variable];
+
+        if (node is BoundAssignmentExpression a)
         {
-            return literalExpression.Value;
+            var value = EvaluateExpression(a.Expression);
+            _variables[a.Variable] = value;
+            return value;
         }
 
-        if (node is UnaryExpression unaryExpression)
+        if (node is BoundUnaryExpression unaryExpression)
         {
             var operand = EvaluateExpression(unaryExpression.Operand);
 
@@ -37,7 +46,7 @@ internal class Evaluator
             };
         }
 
-        if (node is BinaryExpression binaryExpression)
+        if (node is BoundBinaryExpression binaryExpression)
         {
             var left = EvaluateExpression(binaryExpression.Left);
             var right = EvaluateExpression(binaryExpression.Right);

@@ -24,7 +24,7 @@ internal sealed class Lexer
         if (index >= _text.Length)
             return '\0';
 
-        return _text[_position];
+        return _text[index];
     }
 
     private void Next()
@@ -114,7 +114,11 @@ internal sealed class Lexer
                     _position += 2;
                     return new Token(Kind.EqualsEquals, start, "==", null);
                 }
-                break;
+                else
+                {
+                    _position += 1;
+                    return new Token(Kind.Equals, start, "=", null);
+                }
             case '!':
                 if (LookAhead == '=')
                 {
@@ -122,7 +126,10 @@ internal sealed class Lexer
                     return new Token(Kind.BangEquals, start, "==", null);
                 }
                 else
-                    return new Token(Kind.Bang, _position++, "!", null);
+                {
+                    _position += 1;
+                    return new Token(Kind.Bang, start, "!", null);
+                }
         }
 
         _diagnostics.ReportBadCharacter(_position, Current);

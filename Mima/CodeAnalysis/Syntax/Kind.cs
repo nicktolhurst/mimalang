@@ -29,5 +29,8 @@ public enum Kind
     AmpAmp,
     ForwardSlash,
     Asterisk,
-    BangEquals
+    BangEquals,
+    NameExpression,
+    AssignmentExpression,
+    Equals
 }

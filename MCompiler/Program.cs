@@ -3,6 +3,7 @@ using Mima.CodeAnalysis.Syntax;
 using Mima.MCompiler.Utils;
 
 bool showTree = false;
+bool showCompactTree = false;
 var variables = new Dictionary<VariableSymbol, object>();
 
 while (true)
@@ -17,8 +18,14 @@ while (true)
     switch (line)
     {
         case "#showTree":
+        case "#st":
             showTree = !showTree;
             Console.WriteLine(showTree ? "Showing syntax tree." : "Not showing syntax tree.");
+            continue;
+        case "#showCompactTree":
+        case "#sct":
+            showCompactTree = !showCompactTree;
+            Console.WriteLine(showCompactTree ? "Showing compact tree." : "Not showing compact tree.");
             continue;
         case "#cls":
         case "#clear":
@@ -36,6 +43,11 @@ while (true)
     if (showTree)
     {
         TreeWriter.WriteTree(syntaxTree.Root);
+    }
+
+    if (showCompactTree)
+    {
+        TreeWriter.WriteCompactTree(syntaxTree.Root);
     }
 
     if (!result.Diagnostics.Any())

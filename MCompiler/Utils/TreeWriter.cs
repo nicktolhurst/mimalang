@@ -10,11 +10,18 @@ internal static class TreeWriter
         WriteColour(marker, ConsoleColor.DarkGray);
         WriteColour(node.Kind, ConsoleColor.DarkYellow);
 
-        if (node is CodeAnalysis.Syntax.Token token && token.Value != null)
+        if (node is CodeAnalysis.Syntax.Token nonNullToken && nonNullToken.Value != null)
         {
             Console.Write(" ");
-            WriteColour(token.Value, ConsoleColor.Gray);
+            WriteColour(nonNullToken.Value, ConsoleColor.DarkGreen);
         }
+
+        if (node is CodeAnalysis.Syntax.Token identifierToken && identifierToken.Kind == CodeAnalysis.Syntax.Kind.Identifier)
+        {
+            Console.Write(" ");
+            WriteColour(identifierToken.Text, ConsoleColor.DarkBlue);
+        }
+
 
         Console.WriteLine();
 
@@ -25,6 +32,37 @@ internal static class TreeWriter
         foreach (var child in node.GetChildren())
         {
             WriteTree(child, indent, child == lastChild);
+        }
+    }
+
+    internal static void WriteCompactTree(CodeAnalysis.Syntax.Node node, string indent = " ", bool isLast = true, bool isFirst = false)
+    {
+        if (node is CodeAnalysis.Syntax.Token token)
+        {
+            WriteColour(indent, ConsoleColor.DarkGray);
+
+            if (token.Value != null)
+            {
+                Console.Write(" ");
+                WriteColour(token.Value, ConsoleColor.DarkGreen);
+            }
+            else
+            {
+                Console.Write(" ");
+                WriteColour(token.Text, ConsoleColor.DarkBlue);
+            }
+
+            Console.WriteLine();
+        }
+
+        indent += "    ";
+
+        var lastChild = node.GetChildren().LastOrDefault();
+        var firstChild = node.GetChildren().FirstOrDefault();
+
+        foreach (var child in node.GetChildren())
+        {
+            WriteCompactTree(child, indent, child == lastChild, child == firstChild);
         }
     }
 

@@ -14,7 +14,7 @@ internal sealed class Lexer
     public DiagnosticBag Diagnostics => _diagnostics;
 
     private char Current => Peek(0);
-    
+
     private char LookAhead => Peek(1);
 
     private char Peek(int offset)
@@ -34,7 +34,6 @@ internal sealed class Lexer
 
     public Token Lex()
     {
-
         var start = _position;
 
         if (_position >= _text.Length)
@@ -80,60 +79,47 @@ internal sealed class Lexer
             return new Token(kind, start, text, null);
         }
 
-        switch (Current)
+        return Current switch
         {
-            case '+':
-                return new Token(Kind.Plus, _position++, "+", null);
-            case '-':
-                return new Token(Kind.Minus, _position++, "-", null);
-            case '/':
-                return new Token(Kind.ForwardSlash, _position++, "/", null);
-            case '*':
-                return new Token(Kind.Asterisk, _position++, "*", null);
-            case '(':
-                return new Token(Kind.OpenParen, _position++, "(", null);
-            case ')':
-                return new Token(Kind.CloseParen, _position++, ")", null);
-            case '&':
-                if (LookAhead == '&')
-                {
-                    _position += 2;
-                    return new Token(Kind.AmpAmp, start, "&&", null);
-                }
-                break;
-            case '|':
-                if (LookAhead == '|')
-                {
-                    _position += 2;
-                    return new Token(Kind.PipePipe, start, "||", null);
-                }
-                break;
-            case '=':
-                if (LookAhead == '=')
-                {
-                    _position += 2;
-                    return new Token(Kind.EqualsEquals, start, "==", null);
-                }
-                else
-                {
-                    _position += 1;
-                    return new Token(Kind.Equals, start, "=", null);
-                }
-            case '!':
-                if (LookAhead == '=')
-                {
-                    _position += 2;
-                    return new Token(Kind.BangEquals, start, "==", null);
-                }
-                else
-                {
-                    _position += 1;
-                    return new Token(Kind.Bang, start, "!", null);
-                }
-        }
+            // Arithmetic operators:
+            '+' => LexToken(Kind.Plus, _position, "+", null),
+            '-' => LexToken(Kind.Minus, _position, "-", null),
+            '/' => LexToken(Kind.ForwardSlash, _position, "/", null),
+            '*' => LexToken(Kind.Asterisk, _position, "*", null),
 
-        _diagnostics.ReportBadCharacter(_position, Current);
+            // Equivalence operators:
+            '=' when LookAhead == '=' => LexToken(Kind.EqualsEquals, _position, "==", null),
+            '!' when LookAhead == '=' => LexToken(Kind.BangEquals, _position, "!=", null),
 
-        return new Token(Kind.BadToken, _position++, _text.Substring(_position - 1, 1), null);
+            // Scope operators:
+            '(' => LexToken(Kind.OpenParen, _position, "(", null),
+            ')' => LexToken(Kind.CloseParen, _position, ")", null),
+
+            // Logic operators:
+            '&' when LookAhead == '&' => LexToken(Kind.AmpAmp, _position, "&&", null),
+            '|' when LookAhead == '|' => LexToken(Kind.PipePipe, _position, "||", null),
+
+            // Negation operators:
+            '!' => LexToken(Kind.Bang, _position, "!", null),
+
+            // Assignment operators:
+            '=' => LexToken(Kind.Equals, _position, "=", null),
+            '<' when LookAhead == '|' => LexToken(Kind.Equals, _position, "<|", null),
+
+            _ => BadToken(Kind.BadToken, _position, _text.Substring(_position - 1, 1), null),
+        };
+    }
+
+    private Token LexToken(Kind kind, int position, string text, object? value)
+    {
+        _position += text.Length;
+        return new Token(kind, position, text, value);
+    }
+
+    private Token BadToken(Kind kind, int position, string text, object? value)
+    {
+        _diagnostics.ReportBadCharacter(position, Current);
+
+        return LexToken(kind, position, text, value);
     }
 }

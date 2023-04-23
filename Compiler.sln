@@ -5,6 +5,8 @@ VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MCompiler", "MCompiler\MCompiler.csproj", "{16B202A9-18D8-4A99-8DA7-B7A28CF4A026}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mima", "Mima\Mima.csproj", "{0F4EA081-7CF7-4FDC-923A-489BEEA00C6F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -18,5 +20,9 @@ Global
 		{16B202A9-18D8-4A99-8DA7-B7A28CF4A026}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{16B202A9-18D8-4A99-8DA7-B7A28CF4A026}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{16B202A9-18D8-4A99-8DA7-B7A28CF4A026}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0F4EA081-7CF7-4FDC-923A-489BEEA00C6F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0F4EA081-7CF7-4FDC-923A-489BEEA00C6F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0F4EA081-7CF7-4FDC-923A-489BEEA00C6F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0F4EA081-7CF7-4FDC-923A-489BEEA00C6F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

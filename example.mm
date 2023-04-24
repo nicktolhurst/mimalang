@@ -89,27 +89,60 @@ instance <| class::c(1 2)
 
 instance::fn('123')
 
-// object name will be the class name:
+
+
+
+
+
+// functions: #(type #[args ..] <| piped | functions | right | to | left)
+//
+print_sorted <| #(void #[list] <| printf($) | sort | list)
+
+this::print_sorted [1 12 5 33 0 63] // or
+do print_sorted [1 12 5 33 0 63]
+
+// classes are just objects: name <| { prop: val } where a property can return a type of self constructred.
+//
 dog <| {
-    // fields are a special map
+    // fields could be a nested map - or not ¯\_(ツ)_/¯ 
     fields: {name: nil breed: nil}
 
-    // constructors are a list, allowing for polymorphism. function name can be anything.
-    rescue: [ #(#[name, breed] | fields[name] <| name && fields[breed] <| breed) ]
+    // Constructors are a list, allowing for polymorphism by matching signitures. The key for the
+    // constructor prorperty could be anything.
+    rescue: [dog #(#[name, breed] | fields[name] <| name && fields[breed] <| breed) ]
 
     // keys can contain any data structure, including functions or other classes. 
     train: #(bool #[command] <| | random | [true false])
 
-    // expose fields as properties
+    // expose fields as properties for a public api feel.
     name: fields[name]
 }
 
-// calling an array of functions will attempt to match the signiture.
+// calling an array of functions will attempt to match the signiture. This returns a dog object with fields set.
 pet <| dog::rescue('Mima' 'Mongrel')
+
+// calling the train method returns a bool. Random chance of this been a success.
 isTrained <| pet::train('sit')
-pet_name <| pet.name
+
+// can access name propery if mapped in object.
+pet_name <| pet.name 
+
+// if not mapped, this would be: 
+pet_name <| pet.fields[name] 
+
+
+
+
 
 // example of how a class could work as a custom object object
+
+
+
+
+
+
+
+
 
 // name args setter
 @(my_class #[arg1 arg2] <| 

@@ -1,6 +1,5 @@
 ﻿using Mima.CodeAnalysis;
 using Mima.CodeAnalysis.Syntax;
-using Mima.MCompiler.Utils;
 
 bool showTree = false;
 bool showCompactTree = false;
@@ -42,12 +41,7 @@ while (true)
 
     if (showTree)
     {
-        TreeWriter.WriteTree(syntaxTree.Root);
-    }
-
-    if (showCompactTree)
-    {
-        TreeWriter.WriteCompactTree(syntaxTree.Root);
+        syntaxTree.Root.WriteTo(Console.Out);
     }
 
     if (!result.Diagnostics.Any())

@@ -1,4 +1,5 @@
 namespace Mima.CodeAnalysis.Syntax;
+using Mima.CodeAnalysis.Text;
 
 public sealed class Token : Node
 {

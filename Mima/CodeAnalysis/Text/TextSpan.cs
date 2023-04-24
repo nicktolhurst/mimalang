@@ -1,4 +1,4 @@
-namespace Mima.CodeAnalysis;
+namespace Mima.CodeAnalysis.Text;
 
 public readonly struct TextSpan
 {

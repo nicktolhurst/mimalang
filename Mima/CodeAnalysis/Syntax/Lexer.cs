@@ -1,3 +1,5 @@
+using Mima.CodeAnalysis.Text;
+
 namespace Mima.CodeAnalysis.Syntax;
 
 internal sealed class Lexer

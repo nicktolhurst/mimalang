@@ -31,7 +31,7 @@ public class EvaluationTests
     {
         var syntaxTree = SyntaxTree.Parse(text);
         var compilation = new Compilation(syntaxTree);
-        var variables = new Dictionary<VariableSymbol, object>();
+        var variables = new Dictionary<VariableSymbol, object?>();
         var result = compilation.Evaluate(variables);
 
         Assert.Empty(result.Diagnostics);

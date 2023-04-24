@@ -2,6 +2,7 @@ namespace Mima.CodeAnalysis.Syntax;
 
 using System;
 using System.Reflection;
+using Mima.CodeAnalysis.Text;
 
 public abstract class Node
 {

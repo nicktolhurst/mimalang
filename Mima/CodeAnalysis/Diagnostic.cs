@@ -1,4 +1,5 @@
 namespace Mima.CodeAnalysis;
+using Mima.CodeAnalysis.Text;
 
 public sealed class Diagnostic
 {

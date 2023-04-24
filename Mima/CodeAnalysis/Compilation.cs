@@ -13,7 +13,7 @@ public partial class Compilation
 
     public SyntaxTree SyntaxTree { get; }
 
-    public EvaluationResult Evaluate(Dictionary<VariableSymbol, object> variables)
+    public EvaluationResult Evaluate(Dictionary<VariableSymbol, object?> variables)
     {
         var binder = new Binder(variables);
         var boundExpression = binder.BindExpression(SyntaxTree.Root);

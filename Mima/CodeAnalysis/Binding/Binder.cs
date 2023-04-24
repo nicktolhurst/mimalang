@@ -3,16 +3,16 @@ namespace Mima.CodeAnalysis.Binding;
 internal sealed class Binder 
 {
     private readonly DiagnosticBag _diagnostics = new();
-    private readonly Dictionary<VariableSymbol, object> _variables;
+    private readonly Dictionary<VariableSymbol, object?> _variables;
 
-    public Binder(Dictionary<VariableSymbol, object> variables)
+    public Binder(Dictionary<VariableSymbol, object?> variables)
     {
         _variables = variables;
     }
 
     public DiagnosticBag Diagnostics => _diagnostics;
 
-    public Dictionary<VariableSymbol, object> Variables => _variables;
+    public Dictionary<VariableSymbol, object?> Variables => _variables;
 
     public BoundExpression BindExpression(Syntax.ExpressionSyntax syntax)
     {

@@ -3,7 +3,7 @@ using Mima.CodeAnalysis.Syntax;
 
 bool showTree = false;
 bool showCompactTree = false;
-var variables = new Dictionary<VariableSymbol, object>();
+var variables = new Dictionary<VariableSymbol, object?>();
 
 while (true)
 {

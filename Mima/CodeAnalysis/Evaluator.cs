@@ -5,9 +5,9 @@ using Binding;
 internal class Evaluator
 {
     private readonly BoundExpression _root;
-    private readonly Dictionary<VariableSymbol, object> _variables;
+    private readonly Dictionary<VariableSymbol, object?> _variables;
 
-    public Evaluator(BoundExpression root, Dictionary<VariableSymbol, object> variables)
+    public Evaluator(BoundExpression root, Dictionary<VariableSymbol, object?> variables)
     {
         _root = root;
         _variables = variables;
@@ -30,7 +30,7 @@ internal class Evaluator
 
     private static object EvaluateLiteralExpression(BoundLiteralExpression n) => n.Value;
 
-    private object EvaluateVariableExpression(BoundVariableExpression v) => _variables[v.Variable];
+    private object EvaluateVariableExpression(BoundVariableExpression v) => _variables[v.Variable]!;
 
     private object EvaluateAssignmentExpression(BoundAssignmentExpression a)
     {

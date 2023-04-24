@@ -1,5 +1,5 @@
 using System.Collections;
-using System.Collections.Generic;
+using Mima.CodeAnalysis.Text;
 
 namespace Mima.CodeAnalysis;
 

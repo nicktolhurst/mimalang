@@ -13,11 +13,4 @@ public sealed class BinaryExpressionSyntax : ExpressionSyntax
     public ExpressionSyntax Left { get; }
     public Token Token { get; }
     public ExpressionSyntax Right { get; }
-
-    public override IEnumerable<Node> GetChildren()
-    {
-        yield return Left;
-        yield return Token;
-        yield return Right;
-    }
 }

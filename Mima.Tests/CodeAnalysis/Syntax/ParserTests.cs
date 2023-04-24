@@ -8,8 +8,8 @@ public class ParserTests
     {
         var op1Precedence = Facts.GetBinaryOperatorPrecedence(op1);
         var op2Precedence = Facts.GetBinaryOperatorPrecedence(op2);
-        var op1Text = Facts.GetText(op1);
-        var op2Text = Facts.GetText(op2);
+        var op1Text = Facts.GetText(op1) ?? string.Empty;
+        var op2Text = Facts.GetText(op2) ?? string.Empty;
         var text = $"a {op1Text} b {op2Text} c";
         var expression = SyntaxTree.Parse(text).Root;
 
@@ -64,8 +64,8 @@ public class ParserTests
     {
         var unaryPrecedence = Facts.GetUnaryOperatorPrecedence(unaryKind);
         var binaryPrecedence = Facts.GetBinaryOperatorPrecedence(binaryKind);
-        var unaryText = Facts.GetText(unaryKind);
-        var binaryText = Facts.GetText(binaryKind);
+        var unaryText = Facts.GetText(unaryKind) ?? string.Empty;
+        var binaryText = Facts.GetText(binaryKind) ?? string.Empty;
         var text = $"{unaryText} a {binaryText} b";
         var expression = SyntaxTree.Parse(text).Root;
 

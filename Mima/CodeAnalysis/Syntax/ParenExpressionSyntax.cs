@@ -14,11 +14,4 @@ public sealed class ParenExpressionSyntax : ExpressionSyntax
     public Token OpenToken { get; }
     public ExpressionSyntax Expression { get; }
     public Token CloseToken { get; }
-
-    public override IEnumerable<Node> GetChildren()
-    {
-        yield return OpenToken;
-        yield return Expression;
-        yield return CloseToken;
-    }
 }

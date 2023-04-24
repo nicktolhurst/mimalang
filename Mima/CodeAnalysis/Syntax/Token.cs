@@ -15,9 +15,4 @@ public sealed class Token : Node
     public string Text { get; }
     public object? Value { get; }
     public TextSpan TextSpan => new (Position, Text.Length);
-
-    public override IEnumerable<Node> GetChildren()
-    {
-        return Enumerable.Empty<Node>();
-    }
 }

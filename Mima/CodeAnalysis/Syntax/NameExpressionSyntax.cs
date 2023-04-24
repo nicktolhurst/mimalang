@@ -10,9 +10,4 @@ public sealed class NameExpressionSyntax : ExpressionSyntax
     public Token Token { get; }
 
     public override Kind Kind => Syntax.Kind.NameExpression;
-
-    public override IEnumerable<Node> GetChildren()
-    {
-        yield return Token;
-    }
 }

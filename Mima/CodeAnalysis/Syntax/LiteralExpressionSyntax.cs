@@ -7,7 +7,7 @@ public sealed class LiteralExpressionSyntax : ExpressionSyntax
     {
     }
 
-    public LiteralExpressionSyntax(Token token, object value)
+    public LiteralExpressionSyntax(Token token, object? value)
     {
         Token = token;
         Value = value;
@@ -15,10 +15,5 @@ public sealed class LiteralExpressionSyntax : ExpressionSyntax
 
     public override Kind Kind => Kind.LiteralExpression;
     public Token Token { get; }
-    public object Value { get; }
-
-    public override IEnumerable<Node> GetChildren()
-    {
-        yield return Token;
-    }
+    public object? Value { get; }
 }

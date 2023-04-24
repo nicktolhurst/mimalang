@@ -14,11 +14,4 @@ public sealed class AssignmentExpressionSyntax : ExpressionSyntax
     public ExpressionSyntax Expression { get; }
 
     public override Kind Kind => Syntax.Kind.AssignmentExpression;
-
-    public override IEnumerable<Node> GetChildren()
-    {
-        yield return Token;
-        yield return EqualsToken;
-        yield return Expression;
-    }
 }

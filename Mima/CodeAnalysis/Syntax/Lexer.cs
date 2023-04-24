@@ -39,15 +39,15 @@ internal sealed class Lexer
         if (char.IsDigit(Current))
             return LexNumberToken(start);
 
-        if (char.IsWhiteSpace(Current))
+        else if (char.IsWhiteSpace(Current))
             return LexWhiteSpaceToken(start);
 
-        if (char.IsLetter(Current))
+        else if (char.IsLetter(Current))
             return LexStringToken(start);
 
         return Current switch
         {
-            '\0' =>  new Token(Kind.EOF, _position, "\0", null),
+            '\0' => new Token(Kind.EOF, _position, "\0", null),
             '!' when LookAhead == '=' => LexToken(Kind.BangEquals),
             '!' => LexToken(Kind.Bang),
             '=' when LookAhead == '=' => LexToken(Kind.EqualsEquals),

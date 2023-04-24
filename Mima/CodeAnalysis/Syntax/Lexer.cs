@@ -81,30 +81,19 @@ internal sealed class Lexer
 
         return Current switch
         {
-            // Arithmetic operators:
+            '!' when LookAhead == '=' => LexToken(Kind.BangEquals),
+            '!' => LexToken(Kind.Bang),
+            '=' when LookAhead == '=' => LexToken(Kind.EqualsEquals),
+            '=' => LexToken(Kind.Equals),
             '+' => LexToken(Kind.Plus),
             '-' => LexToken(Kind.Minus),
             '/' => LexToken(Kind.ForwardSlash),
             '*' => LexToken(Kind.Asterisk),
-
-            // Equivalence operators:
-            '=' when LookAhead == '=' => LexToken(Kind.EqualsEquals),
-            '!' when LookAhead == '=' => LexToken(Kind.BangEquals),
-
-            // Scope operators:
-            '(' => LexToken(Kind.OpenParen),
-            ')' => LexToken(Kind.CloseParen),
-
-            // Logic operators:
             '&' when LookAhead == '&' => LexToken(Kind.AmpAmp),
             '|' when LookAhead == '|' => LexToken(Kind.PipePipe),
-
-            // Negation operators:
-            '!' => LexToken(Kind.Bang),
-
-            // Assignment operators:
-            '=' => LexToken(Kind.Equals),
             '<' when LookAhead == '|' => LexToken(Kind.Equals, "<|"),
+            '(' => LexToken(Kind.OpenParen),
+            ')' => LexToken(Kind.CloseParen),
 
             _ => BadToken(Kind.BadToken, _text.Substring(_position - 1, 1)),
         };

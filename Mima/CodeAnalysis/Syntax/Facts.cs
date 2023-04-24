@@ -44,6 +44,26 @@ public static class Facts
         };
     }
 
+    public static IEnumerable<Kind> GetUnaryOperatorsKinds()
+    {
+        var kinds = (Kind[])Enum.GetValues(typeof(Kind));
+        foreach (var kind in kinds)
+        {
+            if (GetUnaryOperatorPrecedence(kind) > 0)
+                yield return kind;
+        }
+    }
+
+    public static IEnumerable<Kind> GetBinaryOperatorsKinds()
+    {
+        var kinds = (Kind[])Enum.GetValues(typeof(Kind));
+        foreach (var kind in kinds)
+        {
+            if(GetBinaryOperatorPrecedence(kind) > 0)
+                yield return kind;
+        }
+    }
+
     public static string? GetText(Kind kind)
     {
         return kind switch
@@ -54,8 +74,6 @@ public static class Facts
             Kind.Bang           => "!",
             Kind.EqualsEquals   => "==",
             Kind.BangEquals     => "!=",
-            // case Kind.Identifier: return "";
-            // case Kind.Number: return "";
             Kind.Asterisk       => "*",
             Kind.ForwardSlash   => "/",
             Kind.Plus           => "+",

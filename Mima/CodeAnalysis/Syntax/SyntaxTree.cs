@@ -1,10 +1,11 @@
 namespace Mima.CodeAnalysis.Syntax;
+using System.Collections.Immutable;
 
 public sealed class SyntaxTree
 {
-    public SyntaxTree(IEnumerable<Diagnostic> diagnostics, ExpressionSyntax root, Token endOfFileToken)
+    public SyntaxTree(ImmutableArray<Diagnostic> diagnostics, ExpressionSyntax root, Token endOfFileToken)
     {
-        Diagnostics = diagnostics.ToArray();
+        Diagnostics = diagnostics;
         Root = root;
         EndOfFileToken = endOfFileToken;
     }
@@ -30,7 +31,7 @@ public sealed class SyntaxTree
         }
     }
 
-    public IReadOnlyList<Diagnostic> Diagnostics { get; }
+    public ImmutableArray<Diagnostic> Diagnostics { get; }
     public ExpressionSyntax Root { get; }
     public Token EndOfFileToken { get; }
 }

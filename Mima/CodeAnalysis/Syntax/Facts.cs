@@ -82,7 +82,7 @@ public static class Facts
             Kind.OpenParen      => "(",
             Kind.False          => "false",
             Kind.True           => "true",
-            _ => null,
+            _ => null
         };
     }
 }

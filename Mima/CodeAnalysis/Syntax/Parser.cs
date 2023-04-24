@@ -1,4 +1,5 @@
 namespace Mima.CodeAnalysis.Syntax;
+using System.Collections.Immutable;
 
 internal sealed class Parser
 {
@@ -38,7 +39,7 @@ internal sealed class Parser
 
         var eof = MatchToken(Kind.EOF);
 
-        return new SyntaxTree(_diagnostics, expression, eof);
+        return new SyntaxTree(_diagnostics.ToImmutableArray(), expression, eof);
     }
 
     private ExpressionSyntax ParseExpression()
@@ -91,38 +92,45 @@ internal sealed class Parser
         return left;
     }
 
-    private ExpressionSyntax ParsePrimaryExpression()
+    private ExpressionSyntax ParsePrimaryExpression() => Current.Kind switch
     {
-        switch (Current.Kind)
-        {
-            case Kind.OpenParen:
-            {
-                var left = NextToken();
-                var expression = ParseExpression();
-                var right = MatchToken(Kind.CloseParen);
-                return new ParenExpressionSyntax(left, expression, right);
-            }
+        Kind.OpenParen => ParseParenthesizedExpression(),
+        Kind.True or Kind.False => ParseBooleanExpression(),
+        Kind.Number => ParseNumberExpression(),
+        Kind.Identifier or _ => ParseNameExpression(),
+    };
 
-            case Kind.True:
-            case Kind.False:
-            {
-                var keywordToken = NextToken();
-                var value = keywordToken.Kind == Kind.True;
-                return new LiteralExpressionSyntax(keywordToken, value);
-            }
+    private ExpressionSyntax ParseNumberExpression()
+    {
+        var numberToken = MatchToken(Kind.Number);
+        return new LiteralExpressionSyntax(numberToken);
+    }
 
-            case Kind.Identifier:
-            {
-                var identifierToken = NextToken();
-                return new NameExpressionSyntax(identifierToken);
-            }
+    private ExpressionSyntax ParseParenthesizedExpression()
+    {
+        var left = MatchToken(Kind.OpenParen);
+        var expression = ParseExpression();
+        var right = MatchToken(Kind.CloseParen);
+        return new ParenExpressionSyntax(left, expression, right);
+    }
 
-            default:
-            {
-                var token = MatchToken(Kind.Number);
-                return new LiteralExpressionSyntax(token);
-            }
-        }
+    private ExpressionSyntax ParseBooleanExpression()
+    {
+        bool isTrue = Current.Kind == Kind.True;
+        var keywordToken = isTrue ? MatchToken(Kind.True) : MatchToken(Kind.False);
+        return new LiteralExpressionSyntax(keywordToken, isTrue);
+    }
+
+    private ExpressionSyntax ParseNameExpression()
+    {
+        var identifierToken = MatchToken(Kind.Identifier);
+        return new NameExpressionSyntax(identifierToken);
+    }
+
+    private ExpressionSyntax ParseLiteralExpression()
+    {
+        var token = MatchToken(Kind.Number);
+        return new LiteralExpressionSyntax(token);
     }
 
     private Token Peek(int offset)

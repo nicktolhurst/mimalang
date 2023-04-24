@@ -105,7 +105,7 @@ internal sealed class Lexer
     private Token LexToken(Kind kind)
     {
         var position = _position;
-        var text = Facts.GetText(kind);
+        var text = Facts.GetText(kind) ?? string.Empty;
 
         _position += text.Length;
         return new Token(kind, position, text, null);

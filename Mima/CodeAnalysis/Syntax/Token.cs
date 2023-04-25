@@ -15,5 +15,5 @@ public sealed class Token : Node
     public int Position { get; }
     public string Text { get; }
     public object? Value { get; }
-    public TextSpan TextSpan => new (Position, Text.Length);
+    public TextSpan TextSpan => new (Position, Text?.Length ?? 0);
 }

@@ -66,7 +66,7 @@ internal sealed class Lexer
             '(' => LexToken(Kind.OpenParen),
             ')' => LexToken(Kind.CloseParen),
 
-            _ => BadToken(Kind.BadToken, _text.ToString(_position - 1, 1)),
+            _ => BadToken(Kind.BadToken, _text.ToString(_position, 1)),
         };
     }
 

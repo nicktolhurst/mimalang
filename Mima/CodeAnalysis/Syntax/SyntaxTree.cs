@@ -29,14 +29,12 @@ public sealed class SyntaxTree
         return parser.Parse();
     }
 
-
     public static IEnumerable<Token> ParseTokens(string text)
     {
         var sourceText = SourceText.From(text);
         return ParseTokens(sourceText);
     }
     
-
     public static IEnumerable<Token> ParseTokens(SourceText text)
     {
         var lexer = new Lexer(text);

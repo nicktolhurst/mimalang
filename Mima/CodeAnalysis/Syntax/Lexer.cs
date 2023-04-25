@@ -4,11 +4,13 @@ namespace Mima.CodeAnalysis.Syntax;
 
 internal sealed class Lexer
 {
-    private readonly string _text;
-    private int _position;
     private readonly DiagnosticBag _diagnostics = new();
+    private readonly SourceText _text;
 
-    public Lexer(string text)
+    private int _position;
+    private int _start;
+
+    public Lexer(SourceText text)
     {
         _text = text;
     }
@@ -36,16 +38,16 @@ internal sealed class Lexer
 
     public Token Lex()
     {
-        var start = _position;
+        _start = _position;
 
         if (char.IsDigit(Current))
-            return LexNumberToken(start);
+            return LexNumberToken();
 
         else if (char.IsWhiteSpace(Current))
-            return LexWhiteSpaceToken(start);
+            return LexWhiteSpaceToken();
 
         else if (char.IsLetter(Current))
-            return LexStringToken(start);
+            return LexIdentifierOrKeyword();
 
         return Current switch
         {
@@ -64,44 +66,45 @@ internal sealed class Lexer
             '(' => LexToken(Kind.OpenParen),
             ')' => LexToken(Kind.CloseParen),
 
-            _ => BadToken(Kind.BadToken, _text.Substring(_position - 1, 1)),
+            _ => BadToken(Kind.BadToken, _text.ToString(_position - 1, 1)),
         };
     }
 
-    private Token LexStringToken(int start)
+    private Token LexIdentifierOrKeyword()
     {
         while (char.IsLetter(Current))
             Next();
 
-        var text = _text[start.._position];
-
+        var length = _position - _start;
+        var text = _text.ToString(_start, length);
         var kind = Facts.GetKeywordKind(text);
+        var kindText = Facts.GetText(kind) ?? _text.ToString(_start, length);
 
-        return new Token(kind, start, text, null);
+        return new Token(kind, _start, kindText, null);
     }
 
-    private Token LexWhiteSpaceToken(int start)
+    private Token LexWhiteSpaceToken()
     {
         while (char.IsWhiteSpace(Current))
             Next();
-
-        var length = _position - start;
-        var text = _text.Substring(start, length);
-
-        return new Token(Kind.WhiteSpace, start, text, null);
+            
+        var length = _position - _start;
+        var kindText = Facts.GetText(Kind.Number)?? _text.ToString(_start, length);
+        return new Token(Kind.WhiteSpace, _start, kindText, null);
     }
 
-    private Token LexNumberToken(int start)
+    private Token LexNumberToken()
     {
         while (char.IsDigit(Current))
             Next();
 
-        var text = _text[start.._position];
-
+        var length = _position - _start;
+        var text = _text.ToString(_start, length);
         if (!int.TryParse(text, out var value))
-            _diagnostics.ReportInvalidNumber(new TextSpan(start, _position - start), _text, typeof(int));
+            _diagnostics.ReportInvalidNumber(new TextSpan(_start, length), text, typeof(int));
 
-        return new Token(Kind.Number, start, text, value);
+        var kindText = Facts.GetText(Kind.Number) ?? _text.ToString(_start, length);
+        return new Token(Kind.Number, _start, kindText, value);
     }
 
     private Token LexToken(Kind kind)

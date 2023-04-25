@@ -1,13 +1,15 @@
 namespace Mima.CodeAnalysis.Syntax;
 using System.Collections.Immutable;
+using Mima.CodeAnalysis.Text;
 
 internal sealed class Parser
 {
-    private readonly Token[] _tokens;
-    private int _position;
     private readonly DiagnosticBag _diagnostics = new();
+    private readonly SourceText _text;
+    private readonly ImmutableArray<Token> _tokens;
+    private int _position;
 
-    public Parser(string text)
+    public Parser(SourceText text)
     {
         var tokens = new List<Token>();
 
@@ -27,7 +29,8 @@ internal sealed class Parser
 
         } while (token.Kind != Kind.EOF);
 
-        _tokens = tokens.ToArray();
+        _text = text;
+        _tokens = tokens.ToImmutableArray();
         _diagnostics.AddRange(lexer.Diagnostics);
     }
 
@@ -36,10 +39,8 @@ internal sealed class Parser
     public SyntaxTree Parse()
     {
         var expression = ParseExpression();
-
         var eof = MatchToken(Kind.EOF);
-
-        return new SyntaxTree(_diagnostics.ToImmutableArray(), expression, eof);
+        return new SyntaxTree(_text, _diagnostics.ToImmutableArray(), expression, eof);
     }
 
     private ExpressionSyntax ParseExpression()

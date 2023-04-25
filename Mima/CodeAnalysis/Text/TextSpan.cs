@@ -1,5 +1,4 @@
 namespace Mima.CodeAnalysis.Text;
-
 public readonly struct TextSpan
 {
     public TextSpan(int start, int length)

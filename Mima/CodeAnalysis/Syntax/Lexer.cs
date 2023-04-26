@@ -8,7 +8,10 @@ internal sealed class Lexer
     private readonly SourceText _text;
 
     private int _position;
+
     private int _start;
+    private Kind _kind;
+    private object? _value;
 
     public Lexer(SourceText text)
     {
@@ -31,109 +34,109 @@ internal sealed class Lexer
         return _text[index];
     }
 
-    private void Next()
-    {
-        _position++;
-    }
-
     public Token Lex()
     {
-        _start = _position;
+        // Reset values.
+        (_start, _kind, _value) = (_position, Kind.BadToken, null);
 
-        if (char.IsDigit(Current))
-            return LexNumberToken();
-
-        else if (char.IsWhiteSpace(Current))
-            return LexWhiteSpaceToken();
-
-        else if (char.IsLetter(Current))
-            return LexIdentifierOrKeyword();
-
-        return Current switch
+        (_start, _kind, _value) = Current switch 
         {
-            '\0' => new Token(Kind.EOF, _position, "\0", null),
-            '!' when LookAhead == '=' => LexToken(Kind.BangEquals),
-            '!' => LexToken(Kind.Bang),
-            '=' when LookAhead == '=' => LexToken(Kind.EqualsEquals),
-            '=' => LexToken(Kind.Equals),
-            '+' => LexToken(Kind.Plus),
-            '-' => LexToken(Kind.Minus),
-            '/' => LexToken(Kind.ForwardSlash),
-            '*' => LexToken(Kind.Asterisk),
-            '&' when LookAhead == '&' => LexToken(Kind.AmpAmp),
-            '|' when LookAhead == '|' => LexToken(Kind.PipePipe),
+            '0' or
+            '1' or
+            '2' or
+            '3' or
+            '4' or
+            '5' or
+            '6' or
+            '7' or
+            '8' or
+            '9' => LexNumberToken(),
+
+            ' ' or
+            '\r' or
+            '\n' or
+            '\t' => LexWhiteSpaceToken(),
+
+            '\0' => LexToken(Kind.EOF),
+
+            '!' when LookAhead == '=' => LexToken(Kind.BangEquals, "!="),
+            '!' => LexToken(Kind.Bang, "!"),
+
+            '=' when LookAhead == '=' => LexToken(Kind.EqualsEquals, "=="),
+            '=' => LexToken(Kind.Equals, "="),
+
+            '&' when LookAhead == '&' => LexToken(Kind.AmpAmp, "&&"),
+            '|' when LookAhead == '|' => LexToken(Kind.PipePipe, "||"),
             '<' when LookAhead == '|' => LexToken(Kind.Equals, "<|"),
-            '(' => LexToken(Kind.OpenParen),
-            ')' => LexToken(Kind.CloseParen),
+            '+' => LexToken(Kind.Plus, "+"),
+            '-' => LexToken(Kind.Minus, "-"),
+            '/' => LexToken(Kind.ForwardSlash, "/"),
+            '*' => LexToken(Kind.Asterisk, "*"),
+            '(' => LexToken(Kind.OpenParen, "("),
+            ')' => LexToken(Kind.CloseParen, ")"),
+            _   => LexDefaultToken()
 
-            _ => BadToken(Kind.BadToken, _text.ToString(_position, 1)),
         };
-    }
-
-    private Token LexIdentifierOrKeyword()
-    {
-        while (char.IsLetter(Current))
-            Next();
 
         var length = _position - _start;
-        var text = _text.ToString(_start, length);
-        var kind = Facts.GetKeywordKind(text);
-        var kindText = Facts.GetText(kind) ?? _text.ToString(_start, length);
+        var text = Facts.GetText(_kind);
+        text ??= _text.ToString(_start, length);
 
-        return new Token(kind, _start, kindText, null);
+        return new Token(_kind, _start, text, _value);
     }
 
-    private Token LexWhiteSpaceToken()
+    private (int, Kind, object?) LexDefaultToken() => 
+        char.IsLetter(Current) 
+            ? LexIdentifierOrKeyword()
+            : char.IsWhiteSpace(Current) 
+                ? LexWhiteSpaceToken() 
+                : LexBadToken();
+
+    private (int, Kind, object?) LexWhiteSpaceToken()
     {
         while (char.IsWhiteSpace(Current))
-            Next();
-            
-        var length = _position - _start;
-        var kindText = Facts.GetText(Kind.Number)?? _text.ToString(_start, length);
-        return new Token(Kind.WhiteSpace, _start, kindText, null);
+            _position++;
+
+        return (_start, Kind.WhiteSpace, _value);
     }
 
-    private Token LexNumberToken()
+    private (int, Kind, object?) LexNumberToken()
     {
         while (char.IsDigit(Current))
-            Next();
+            _position++;
 
         var length = _position - _start;
         var text = _text.ToString(_start, length);
         if (!int.TryParse(text, out var value))
             _diagnostics.ReportInvalidNumber(new TextSpan(_start, length), text, typeof(int));
 
-        var kindText = Facts.GetText(Kind.Number) ?? _text.ToString(_start, length);
-        return new Token(Kind.Number, _start, kindText, value);
+        return (_start, Kind.Number, value);
     }
 
-    private Token LexToken(Kind kind)
+    private (int, Kind, object?) LexIdentifierOrKeyword()
     {
-        var position = _position;
-        var text = Facts.GetText(kind) ?? string.Empty;
+        while (char.IsLetter(Current))
+            _position++;
 
-        _position += text.Length;
-        return new Token(kind, position, text, null);
+        var length = _position - _start;
+        var text = _text.ToString(_start, length);
+        var kind = Facts.GetKeywordKind(text);
+
+        return (_start, kind, _value);
     }
 
-    private Token LexToken(Kind kind, string text)
-    {
-        var position = _position;
+    private (int, Kind, object?) LexToken(Kind kind) => (_start, kind, _value);
 
-        _position += text.Length;
-        return new Token(kind, position, text, null);
-    }
-
-    private Token LexToken(Kind kind, int position, string text, object? value)
+    private (int, Kind, object?) LexToken(Kind kind, string text)
     {
         _position += text.Length;
-        return new Token(kind, position, text, value);
+        return (_start, kind, _value);
     }
 
-    private Token BadToken(Kind kind, string text)
+    private (int, Kind, object?) LexBadToken()
     {
         _diagnostics.ReportBadCharacter(_position, Current);
-
-        return LexToken(kind, _position, text, null);
+        _position++;
+        return(_start, _kind, _value);
     }
 }

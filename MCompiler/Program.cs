@@ -52,7 +52,7 @@ while (true)
         }
     }
 
-    textBuilder.Append(input);
+    textBuilder.AppendLine(input);
     var text = textBuilder.ToString();
 
     var syntaxTree = SyntaxTree.Parse(text);
@@ -83,7 +83,7 @@ while (true)
             Console.WriteLine();
 
             Console.ForegroundColor = ConsoleColor.DarkRed;
-            Console.Write($"({lineNumber}, {character}): ");
+            Console.Write($"[{lineNumber} {character}]: ");
             Console.WriteLine(diagnostic);
             Console.ResetColor();
 
